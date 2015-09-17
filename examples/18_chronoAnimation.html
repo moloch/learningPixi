@@ -1,0 +1,97 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Make a sprite from a tileset sub-image</title>
+<body>
+<script src="../pixi.js/bin/pixi.js"></script>
+<script>
+//Aliases
+var Container = PIXI.Container,
+    autoDetectRenderer = PIXI.autoDetectRenderer,
+    loader = PIXI.loader,
+    Sprite = PIXI.Sprite,
+    Rectangle = PIXI.Rectangle;
+
+//Create a Pixi stage and renderer and add the
+//renderer.view to the DOM
+var stage = new Container(),
+    renderer = autoDetectRenderer(256, 256);
+document.body.appendChild(renderer.view);
+
+//load an image and run the `setup` function when it's done
+loader
+  .add("images/chrono.png")
+  .load(setup);
+
+var chrono1, chrono2, frame_n;
+
+var baseTexture = PIXI.BaseTexture.fromImage('images/chrono.png');
+
+var r1 = new Rectangle(0, 0, 48, 75);
+var r2 = new Rectangle(48, 0, 48, 75);
+var r3 = new Rectangle(48*2, 0, 48, 75);
+var r4 = new Rectangle(48*3, 0, 48, 75);
+
+var r11 = new Rectangle(0, 75, 48, 75);
+var r12 = new Rectangle(48, 75, 48, 75);
+var r13 = new Rectangle(48*2, 75, 48, 75);
+var r14 = new Rectangle(48*3, 75, 48, 75);
+
+var t1 = new PIXI.Texture(baseTexture, r1);
+var t2 = new PIXI.Texture(baseTexture, r2);
+var t3 = new PIXI.Texture(baseTexture, r3);
+var t4 = new PIXI.Texture(baseTexture, r4);
+
+var t11 = new PIXI.Texture(baseTexture, r11);
+var t12 = new PIXI.Texture(baseTexture, r12);
+var t13 = new PIXI.Texture(baseTexture, r13);
+var t14 = new PIXI.Texture(baseTexture, r14);
+
+
+function setup() {
+
+
+  chrono1 = new Sprite(t1);
+  chrono1.x = 32;
+  chrono1.y = 32;
+
+  stage.addChild(chrono1);
+
+  chrono2 = new Sprite(t11);
+  chrono2.x = 96;
+  chrono2.y = 32;
+
+  stage.addChild(chrono2);
+
+  frame_n = 0;
+
+  gameLoop();
+}
+
+function gameLoop(){
+
+  requestAnimationFrame(gameLoop);
+
+  if(frame_n == 10){
+    chrono1.texture = t1;
+    chrono2.texture = t11;
+  }
+  if(frame_n == 20){
+    chrono1.texture = t2;
+    chrono2.texture = t12;
+  }
+  if(frame_n == 30){
+    chrono1.texture = t3;
+    chrono2.texture = t13;
+  }
+  if(frame_n == 40){
+    chrono1.texture = t4;
+    chrono2.texture = t14;
+    frame_n = 0;
+  }
+
+  frame_n += 1;
+  renderer.render(stage);
+}
+
+</script>
+</body>
