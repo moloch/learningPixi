@@ -1,0 +1,102 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Make a sprite from a texture atlas</title>
+<body>
+<script src="../pixi.js/bin/pixi.js"></script>
+<script>
+
+//Aliases
+var Container = PIXI.Container,
+    autoDetectRenderer = PIXI.autoDetectRenderer,
+    loader = PIXI.loader,
+    TextureCache = PIXI.utils.TextureCache,
+    Texture = PIXI.Texture,
+    Sprite = PIXI.Sprite;
+
+//Create a Pixi stage and renderer and add the 
+//renderer.view to the DOM
+var stage = new Container(),
+    renderer = autoDetectRenderer(256, 256);
+document.body.appendChild(renderer.view);
+
+//load a JSON file and run the `setup` function when it's done
+loader
+  .add("images/chrono.json")
+  .load(setup);
+
+//Define variables that might be used in more 
+//than one function
+var chrono, chrono1
+var frame_n = 0
+var chrono_down = {}, chrono_right = {}, chrono_left = {}, chrono_up = {};
+
+function setup() {
+  
+  for (i=0; i<=3; i++){
+    chrono_down[i] = Texture.fromFrame("chrono_down_" + i + ".png")
+    chrono_left[i] = Texture.fromFrame("chrono_left_" + i + ".png")
+    chrono_right[i] = Texture.fromFrame("chrono_right_" + i + ".png")
+    chrono_up[i] = Texture.fromFrame("chrono_up_" + i + ".png")
+  }
+
+  chrono = new Sprite(chrono_down[0]);
+  chrono.x = 0 + 32;
+  chrono.y = 0 + 32;
+  stage.addChild(chrono);
+
+  chrono1 = new Sprite(chrono_left[0]);
+  chrono1.x = 0 + 32;
+  chrono1.y = 96 + 32;
+  stage.addChild(chrono1);
+
+  chrono2 = new Sprite(chrono_right[0]);
+  chrono2.x = 96 + 32;
+  chrono2.y = 0 + 32;
+  stage.addChild(chrono2);
+
+  chrono3 = new Sprite(chrono_up[0]);
+  chrono3.x = 96 + 32;
+  chrono3.y = 96 + 32;
+  stage.addChild(chrono3);
+
+  gameLoop();
+}
+
+function gameLoop(){
+
+  requestAnimationFrame(gameLoop);
+
+  if(frame_n == 10){
+    chrono.texture = chrono_down[0];
+    chrono1.texture = chrono_left[0];
+    chrono2.texture = chrono_right[0];
+    chrono3.texture = chrono_up[0];
+  }
+  if(frame_n == 20){
+    chrono.texture = chrono_down[1];
+    chrono1.texture = chrono_left[1];
+    chrono2.texture = chrono_right[1];
+    chrono3.texture = chrono_up[1];
+  }
+  if(frame_n == 30){
+    chrono.texture = chrono_down[2];
+    chrono1.texture = chrono_left[2];
+    chrono2.texture = chrono_right[2];
+    chrono3.texture = chrono_up[2];
+  }
+  if(frame_n == 40){
+    chrono.texture = chrono_down[3];
+    chrono1.texture = chrono_left[3];
+    chrono2.texture = chrono_right[3];
+    chrono3.texture = chrono_up[3];
+    frame_n = 0;
+  }
+
+  frame_n += 1;
+
+  //Render the stage   
+  renderer.render(stage);
+}
+
+</script>
+</body>
