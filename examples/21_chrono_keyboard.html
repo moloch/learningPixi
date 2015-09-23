@@ -44,7 +44,7 @@ function setup() {
   chrono.y = 0 + 32;
   chrono.vx = 0;
   chrono.vy = 0;
-  chrono.state = 'down';
+  chrono.state = ['down', 'still'];
   stage.addChild(chrono);
 
   //Capture the keyboard arrow keys
@@ -55,39 +55,43 @@ function setup() {
 
   //Left arrow key `press` method
   left.press = function() {
-    chrono.state = 'left';
+    chrono.state = ['left', 'moving'];
     chrono.vx -= 1
   };
 
   //Left arrow key `release` method
   left.release = function() {
+    chrono.state = ['left', 'still'];
     chrono.vx = 0
   };
 
   //Up
   up.press = function() {
-    chrono.state = 'up'
+    chrono.state = ['up', 'moving'];
     chrono.vy -= 1
   };
   up.release = function() {
     chrono.vy = 0
+    chrono.state = ['up', 'still'];
   };
 
   //Right
   right.press = function() {
-    chrono.state = 'right'
+    chrono.state = ['right', 'moving'];
     chrono.vx += 1
   };
   right.release = function() {
+    chrono.state = ['right', 'still'];
     chrono.vx = 0
   };
 
   //Down
   down.press = function() {
-    chrono.state = 'down'
+    chrono.state = ['down', 'moving'];
     chrono.vy += 1
   };
   down.release = function() {
+    chrono.state = ['down', 'still'];
     chrono.vy = 0
   };
 
@@ -122,13 +126,16 @@ function gameLoop(){
 }
 
 function pick_animation(animation_frame){
-  if (chrono.state == 'down')
+  if(chrono.state[1] == 'still'){
+    animation_frame = 0;
+  }
+  if (chrono.state[0] == 'down')
     chrono.texture = chrono_down[animation_frame];
-  if (chrono.state == 'up')
+  if (chrono.state[0] == 'up')
     chrono.texture = chrono_up[animation_frame];
-  if (chrono.state == 'left')
+  if (chrono.state[0] == 'left')
     chrono.texture = chrono_left[animation_frame];
-  if (chrono.state == 'right')
+  if (chrono.state[0] == 'right')
       chrono.texture = chrono_right[animation_frame];
 }
 
