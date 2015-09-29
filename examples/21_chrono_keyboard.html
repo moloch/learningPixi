@@ -16,7 +16,7 @@ var Container = PIXI.Container,
 //Create a Pixi stage and renderer and add the 
 //renderer.view to the DOM
 var stage = new Container(),
-    renderer = autoDetectRenderer(256, 256);
+    renderer = autoDetectRenderer(800, 600);
 document.body.appendChild(renderer.view);
 
 //load a JSON file and run the `setup` function when it's done
@@ -47,55 +47,68 @@ function setup() {
   chrono.state = ['down', 'still'];
   stage.addChild(chrono);
 
-  //Capture the keyboard arrow keys
-  var left = keyboard(37),
-      up = keyboard(38),
-      right = keyboard(39),
-      down = keyboard(40);
+  var controls = {
+    'left': keyboard(37),
+    'up':   keyboard(38),
+    'right':keyboard(39),
+    'down': keyboard(40)
+  }
 
   //Left arrow key `press` method
-  left.press = function() {
+  controls['left'].press = function() {
     chrono.state = ['left', 'moving'];
     chrono.vx -= 1
   };
 
   //Left arrow key `release` method
-  left.release = function() {
-    chrono.state = ['left', 'still'];
+  controls['left'].release = function() {
+    chrono.state = ['left', 'still']
+    updateStatus(controls, 'up', 'right', 'down')
     chrono.vx = 0
   };
 
   //Up
-  up.press = function() {
+  controls['up'].press = function() {
     chrono.state = ['up', 'moving'];
     chrono.vy -= 1
   };
-  up.release = function() {
-    chrono.vy = 0
+  controls['up'].release = function() {
     chrono.state = ['up', 'still'];
+    updateStatus(controls, 'left', 'right', 'down')
+    chrono.vy = 0
   };
 
   //Right
-  right.press = function() {
+  controls['right'].press = function() {
     chrono.state = ['right', 'moving'];
     chrono.vx += 1
   };
-  right.release = function() {
+  controls['right'].release = function() {
     chrono.state = ['right', 'still'];
+    updateStatus(controls, 'up', 'left', 'down')
     chrono.vx = 0
   };
 
   //Down
-  down.press = function() {
+  controls['down'].press = function() {
     chrono.state = ['down', 'moving'];
     chrono.vy += 1
   };
-  down.release = function() {
+  controls['down'].release = function() {
     chrono.state = ['down', 'still'];
+    updateStatus(controls, 'up', 'right', 'left')
     chrono.vy = 0
   };
 
   gameLoop();
+}
+
+function updateStatus(controls){
+  for(var i=1; i<arguments.length; i++) {
+    if(controls[arguments[i]].isDown)
+      chrono.state = [arguments[i], 'moving']
+  }
+
 }
 
 function gameLoop(){
@@ -103,16 +116,16 @@ function gameLoop(){
   requestAnimationFrame(gameLoop);
 
   if(frame_n == 10){
-    pick_animation(0);
-  }
-  if(frame_n == 20){
     pick_animation(1);
   }
-  if(frame_n == 30){
+  if(frame_n == 20){
     pick_animation(2);
   }
-  if(frame_n == 40){
+  if(frame_n == 30){
     pick_animation(3);
+  }
+  if(frame_n == 40){
+    pick_animation(0);
     frame_n = 0;
   }
 
