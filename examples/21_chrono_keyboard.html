@@ -99,21 +99,17 @@ function updateStatus(controls){
     if(controls[arguments[i]].isDown)
       chrono.state = [arguments[i], 'moving']
   }
-
 }
 
 function pick_animation(animation_frame){
   if(chrono.state[1] == 'still'){
     animation_frame = 0;
   }
-  if (chrono.state[0] == 'down')
-    chrono.texture = textures['down'][animation_frame];
-  if (chrono.state[0] == 'up')
-    chrono.texture = textures['up'][animation_frame];
-  if (chrono.state[0] == 'left')
-    chrono.texture = textures['left'][animation_frame];
-  if (chrono.state[0] == 'right')
-      chrono.texture = textures['right'][animation_frame];
+  Object.keys(textures).forEach(function (key){
+    if (chrono.state[0] == key){
+      chrono.texture = textures[key][animation_frame];
+    }
+  })
 }
 
 function addControls(){
