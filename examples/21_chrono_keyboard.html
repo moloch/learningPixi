@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>Make a sprite from a texture atlas</title>
+<title>Running Chrono</title>
 <body>
 <script src="../pixi.js/bin/pixi.js"></script>
 <script>
@@ -13,7 +13,7 @@ var Container = PIXI.Container,
     Texture = PIXI.Texture,
     Sprite = PIXI.Sprite;
 
-//Create a Pixi stage and renderer and add the 
+//Create a Pixi stage and renderer and add the
 //renderer.view to the DOM
 var stage = new Container(),
     renderer = autoDetectRenderer(800, 600);
@@ -24,29 +24,99 @@ loader
   .add("images/chrono.json")
   .load(setup);
 
-//Define variables that might be used in more 
+//Define variables that might be used in more
 //than one function
 var chrono
 var frame_n = 0
-var chrono_down = {}, chrono_right = {}, chrono_left = {}, chrono_up = {};
+var textures;
 
 function setup() {
-  
-  for (i=0; i<=3; i++){
-    chrono_down[i] = Texture.fromFrame("chrono_down_" + i + ".png")
-    chrono_left[i] = Texture.fromFrame("chrono_left_" + i + ".png")
-    chrono_right[i] = Texture.fromFrame("chrono_right_" + i + ".png")
-    chrono_up[i] = Texture.fromFrame("chrono_up_" + i + ".png")
+
+  loadTextures();
+  addControls();
+  loadChrono();
+
+  stage.addChild(chrono);
+
+  play();
+}
+
+function play(){
+
+  requestAnimationFrame(play);
+
+  if(frame_n == 10){
+    pick_animation(1);
+  }
+  if(frame_n == 20){
+    pick_animation(2);
+  }
+  if(frame_n == 30){
+    pick_animation(3);
+  }
+  if(frame_n == 40){
+    pick_animation(0);
+    frame_n = 0;
   }
 
-  chrono = new Sprite(chrono_down[0]);
+  chrono.x += chrono.vx;
+  chrono.y += chrono.vy;
+
+  frame_n += 1;
+
+  //Render the stage
+  renderer.render(stage);
+}
+
+function loadChrono(){
+  chrono = new Sprite(textures['down'][0]);
   chrono.x = 0 + 32;
   chrono.y = 0 + 32;
   chrono.vx = 0;
   chrono.vy = 0;
   chrono.state = ['down', 'still'];
-  stage.addChild(chrono);
+}
 
+
+function loadTextures(){
+
+  textures = {
+    'up': [],
+    'left': [],
+    'down': [],
+    'right': []
+  }
+
+  Object.keys(textures).forEach(function (key){
+    for (var i=0; i<= 3; i++){
+        textures[key].push(Texture.fromFrame("chrono_" + key + "_" + i + ".png"))
+    }
+  })
+}
+
+function updateStatus(controls){
+  for(var i=1; i<arguments.length; i++) {
+    if(controls[arguments[i]].isDown)
+      chrono.state = [arguments[i], 'moving']
+  }
+
+}
+
+function pick_animation(animation_frame){
+  if(chrono.state[1] == 'still'){
+    animation_frame = 0;
+  }
+  if (chrono.state[0] == 'down')
+    chrono.texture = textures['down'][animation_frame];
+  if (chrono.state[0] == 'up')
+    chrono.texture = textures['up'][animation_frame];
+  if (chrono.state[0] == 'left')
+    chrono.texture = textures['left'][animation_frame];
+  if (chrono.state[0] == 'right')
+      chrono.texture = textures['right'][animation_frame];
+}
+
+function addControls(){
   var controls = {
     'left': keyboard(37),
     'up':   keyboard(38),
@@ -99,57 +169,6 @@ function setup() {
     updateStatus(controls, 'up', 'right', 'left')
     chrono.vy = 0
   };
-
-  gameLoop();
-}
-
-function updateStatus(controls){
-  for(var i=1; i<arguments.length; i++) {
-    if(controls[arguments[i]].isDown)
-      chrono.state = [arguments[i], 'moving']
-  }
-
-}
-
-function gameLoop(){
-
-  requestAnimationFrame(gameLoop);
-
-  if(frame_n == 10){
-    pick_animation(1);
-  }
-  if(frame_n == 20){
-    pick_animation(2);
-  }
-  if(frame_n == 30){
-    pick_animation(3);
-  }
-  if(frame_n == 40){
-    pick_animation(0);
-    frame_n = 0;
-  }
-
-  chrono.x += chrono.vx;
-  chrono.y += chrono.vy;
-
-  frame_n += 1;
-
-  //Render the stage   
-  renderer.render(stage);
-}
-
-function pick_animation(animation_frame){
-  if(chrono.state[1] == 'still'){
-    animation_frame = 0;
-  }
-  if (chrono.state[0] == 'down')
-    chrono.texture = chrono_down[animation_frame];
-  if (chrono.state[0] == 'up')
-    chrono.texture = chrono_up[animation_frame];
-  if (chrono.state[0] == 'left')
-    chrono.texture = chrono_left[animation_frame];
-  if (chrono.state[0] == 'right')
-      chrono.texture = chrono_right[animation_frame];
 }
 
 function keyboard(keyCode) {
