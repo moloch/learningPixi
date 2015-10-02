@@ -30,6 +30,11 @@ var chrono
 var frame_n = 0
 var textures;
 
+function Chrono(){}
+
+Chrono.prototype = Object.create(Sprite.prototype)
+Chrono.prototype.constructor = Chrono
+
 function setup() {
 
   loadTextures();
@@ -59,8 +64,8 @@ function play(){
     frame_n = 0;
   }
 
-  chrono.x += chrono.vx;
-  chrono.y += chrono.vy;
+  chrono.x += chrono.v['x'];
+  chrono.y += chrono.v['y'];
 
   frame_n += 1;
 
@@ -72,8 +77,7 @@ function loadChrono(){
   chrono = new Sprite(textures['down'][0]);
   chrono.x = 0 + 32;
   chrono.y = 0 + 32;
-  chrono.vx = 0;
-  chrono.vy = 0;
+  chrono.v = { x:0, y:0 };
   chrono.state = ['down', 'still'];
 }
 
@@ -81,10 +85,10 @@ function loadChrono(){
 function loadTextures(){
 
   textures = {
-    'up': [],
-    'left': [],
-    'down': [],
-    'right': []
+    up:    [],
+    left:  [],
+    down:  [],
+    right: []
   }
 
   Object.keys(textures).forEach(function (key){
@@ -94,10 +98,10 @@ function loadTextures(){
   })
 }
 
-function updateStatus(controls){
-  for(var i=1; i<arguments.length; i++) {
-    if(controls[arguments[i]].isDown)
-      chrono.state = [arguments[i], 'moving']
+function updateStatus(controls, others){
+  for(var i=0; i<others.length; i++) {
+    if(controls[others[i]]['key'].isDown)
+      chrono.state = [others[i], 'moving']
   }
 }
 
@@ -114,57 +118,26 @@ function pick_animation(animation_frame){
 
 function addControls(){
   var controls = {
-    'left': keyboard(37),
-    'up':   keyboard(38),
-    'right':keyboard(39),
-    'down': keyboard(40)
+    left:  { key: keyboard(37), axis: 'x', v: -1, others: ['up',   'right', 'down']},
+    up:    { key: keyboard(38), axis: 'y', v: -1, others: ['left', 'right', 'down']},
+    right: { key: keyboard(39), axis: 'x', v:  1, others: ['up',   'left',  'down']},
+    down:  { key: keyboard(40), axis: 'y', v:  1, others: ['up',   'right', 'left']}
   }
 
-  //Left arrow key `press` method
-  controls['left'].press = function() {
-    chrono.state = ['left', 'moving'];
-    chrono.vx -= 1
-  };
+  Object.keys(controls).forEach(function (key){
+      //Left arrow key `press` method
+    controls[key]['key'].press = function() {
+      chrono.state = [key, 'moving'];
+      chrono.v[controls[key]['axis']] += controls[key]['v']
+    };
 
-  //Left arrow key `release` method
-  controls['left'].release = function() {
-    chrono.state = ['left', 'still']
-    updateStatus(controls, 'up', 'right', 'down')
-    chrono.vx = 0
-  };
-
-  //Up
-  controls['up'].press = function() {
-    chrono.state = ['up', 'moving'];
-    chrono.vy -= 1
-  };
-  controls['up'].release = function() {
-    chrono.state = ['up', 'still'];
-    updateStatus(controls, 'left', 'right', 'down')
-    chrono.vy = 0
-  };
-
-  //Right
-  controls['right'].press = function() {
-    chrono.state = ['right', 'moving'];
-    chrono.vx += 1
-  };
-  controls['right'].release = function() {
-    chrono.state = ['right', 'still'];
-    updateStatus(controls, 'up', 'left', 'down')
-    chrono.vx = 0
-  };
-
-  //Down
-  controls['down'].press = function() {
-    chrono.state = ['down', 'moving'];
-    chrono.vy += 1
-  };
-  controls['down'].release = function() {
-    chrono.state = ['down', 'still'];
-    updateStatus(controls, 'up', 'right', 'left')
-    chrono.vy = 0
-  };
+    //Left arrow key `release` method
+    controls[key]['key'].release = function() {
+      chrono.state = [key, 'still']
+      updateStatus(controls, controls[key]['others'])
+      chrono.v[controls[key]['axis']] = 0
+    };
+  })
 }
 
 function keyboard(keyCode) {
