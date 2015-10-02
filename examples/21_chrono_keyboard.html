@@ -30,17 +30,22 @@ var chrono
 var frame_n = 0
 var textures;
 
-function Chrono(){}
+function Character(texture, x, y, vx, vy, state){
+  Sprite.call(this, texture)
+  this.x = x;
+  this.y = y;
+  this.v = { x: vx, y: vy };
+  this.state = state;
+}
 
-Chrono.prototype = Object.create(Sprite.prototype)
-Chrono.prototype.constructor = Chrono
+Character.prototype = Object.create(Sprite.prototype)
+Character.prototype.constructor = Character
 
 function setup() {
 
   loadTextures();
   addControls();
-  loadChrono();
-
+  chrono = new Character(textures['down'][0], 32, 32, 0, 0, ['down', 'still'])
   stage.addChild(chrono);
 
   play();
@@ -74,11 +79,8 @@ function play(){
 }
 
 function loadChrono(){
-  chrono = new Sprite(textures['down'][0]);
-  chrono.x = 0 + 32;
-  chrono.y = 0 + 32;
-  chrono.v = { x:0, y:0 };
-  chrono.state = ['down', 'still'];
+  chrono = new Chrono(textures['down'][0]);
+
 }
 
 
