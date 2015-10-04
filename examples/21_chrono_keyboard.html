@@ -22,11 +22,12 @@ document.body.appendChild(renderer.view);
 //load a JSON file and run the `setup` function when it's done
 loader
   .add("images/chrono.json")
+  .add("images/treasureHunter.json")
   .load(setup);
 
 //Define variables that might be used in more
 //than one function
-var chrono
+var chrono, blob
 var frame_n = 0
 var textures;
 
@@ -47,6 +48,12 @@ function setup() {
   addControls();
   chrono = new Character(textures['down'][0], 32, 32, 0, 0, ['down', 'still'])
   stage.addChild(chrono);
+
+  blob = new Sprite.fromFrame("blob.png");
+  blob.x = 300
+  blob.y = 0
+  blob.v = 1
+  stage.addChild(blob);
 
   play();
 }
@@ -69,8 +76,18 @@ function play(){
     frame_n = 0;
   }
 
-  chrono.x += chrono.v['x'];
-  chrono.y += chrono.v['y'];
+  if ((chrono.x > 0 || chrono.v['x']!= -1) && (chrono.x < 760 || chrono.v['x']!=1))
+    chrono.x += chrono.v['x'] * 2;
+  if ((chrono.y > 0 || chrono.v['y']!= -1) && (chrono.y < 530 || chrono.v['y']!=1))
+    chrono.y += chrono.v['y'] * 2;
+
+  if(blob.y > 575){
+    blob.v = -1
+  }
+  if(blob.y < 0){
+    blob.v = 1
+  }
+  blob.y += blob.v
 
   frame_n += 1;
 
@@ -127,13 +144,12 @@ function addControls(){
   }
 
   Object.keys(controls).forEach(function (key){
-      //Left arrow key `press` method
+
     controls[key]['key'].press = function() {
       chrono.state = [key, 'moving'];
       chrono.v[controls[key]['axis']] += controls[key]['v']
     };
 
-    //Left arrow key `release` method
     controls[key]['key'].release = function() {
       chrono.state = [key, 'still']
       updateStatus(controls, controls[key]['others'])
