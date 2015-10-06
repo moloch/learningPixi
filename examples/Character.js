@@ -27,7 +27,7 @@ function Character(texture, x, y, vx, vy, state){
   }
 
   this.addControls = function (){
-    var controls = {
+    this.controls = {
       left:  { key: keyboard(37), axis: 'x', v: -1, others: ['up',   'right', 'down']},
       up:    { key: keyboard(38), axis: 'y', v: -1, others: ['left', 'right', 'down']},
       right: { key: keyboard(39), axis: 'x', v:  1, others: ['up',   'left',  'down']},
@@ -38,15 +38,15 @@ function Character(texture, x, y, vx, vy, state){
 
     Object.keys(controls).forEach(function (key){
 
-      controls[key]['key'].press = function() {
+        self.controls[key]['key'].press = function() {
         self.state = [key, 'moving']
         self.v[controls[key]['axis']] = controls[key]['v']
       }
 
       controls[key]['key'].release = function() {
         self.state = [key, 'still']
-        self.updateStatus(controls, controls[key]['others'])
-        self.v[controls[key]['axis']] = 0
+        self.updateStatus(self.controls, self.controls[key]['others'])
+        self.v[self.controls[key]['axis']] = 0
       }
     })
   }
