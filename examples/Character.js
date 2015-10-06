@@ -27,7 +27,7 @@ function Character(texture, x, y, vx, vy, state){
   }
 
   this.addControls = function (){
-    this.controls = {
+    var controls = {
       left:  { key: keyboard(37), axis: 'x', v: -1, others: ['up',   'right', 'down']},
       up:    { key: keyboard(38), axis: 'y', v: -1, others: ['left', 'right', 'down']},
       right: { key: keyboard(39), axis: 'x', v:  1, others: ['up',   'left',  'down']},
