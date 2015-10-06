@@ -1,4 +1,3 @@
-//Aliases
 var Container = PIXI.Container,
     autoDetectRenderer = PIXI.autoDetectRenderer,
     loader = PIXI.loader,
@@ -6,20 +5,15 @@ var Container = PIXI.Container,
     Texture = PIXI.Texture,
     Sprite = PIXI.Sprite;
 
-//Create a Pixi stage and renderer and add the
-//renderer.view to the DOM
 var stage = new Container(),
     renderer = autoDetectRenderer(800, 600);
 document.body.appendChild(renderer.view);
 
-//load a JSON file and run the `setup` function when it's done
 loader
   .add("images/chrono.json")
   .add("images/treasureHunter.json")
   .load(setup);
 
-//Define variables that might be used in more
-//than one function
 var blob
 var frame_n = 0
 var textures;
@@ -92,41 +86,4 @@ Game.prototype.play = function(chrono) {
 
   //Render the stage
   renderer.render(stage);
-}
-
-function keyboard(keyCode) {
-  var key = {};
-  key.code = keyCode;
-  key.isDown = false;
-  key.isUp = true;
-  key.press = undefined;
-  key.release = undefined;
-  //The `downHandler`
-  key.downHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isUp && key.press) key.press();
-      key.isDown = true;
-      key.isUp = false;
-    }
-    event.preventDefault();
-  };
-
-  //The `upHandler`
-  key.upHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isDown && key.release) key.release();
-      key.isDown = false;
-      key.isUp = true;
-    }
-    event.preventDefault();
-  };
-
-  //Attach event listeners
-  window.addEventListener(
-    "keydown", key.downHandler.bind(key), false
-  );
-  window.addEventListener(
-    "keyup", key.upHandler.bind(key), false
-  );
-  return key;
 }
