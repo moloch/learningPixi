@@ -19,14 +19,7 @@ var frame_n = 0
 var textures;
 
 function loadTextures(){
-
-  textures = {
-    up:    [],
-    left:  [],
-    down:  [],
-    right: []
-  }
-
+  textures = {up:[], left:[], down:[], right:[]}
   Object.keys(textures).forEach(function (key){
     for (var i=0; i<= 3; i++){
         textures[key].push(Texture.fromFrame("chrono_" + key + "_" + i + ".png"))
@@ -47,43 +40,46 @@ function setup() {
   blob.v = 1
   stage.addChild(blob);
 
-  new Game().play(chrono);
+  new Game(chrono).play();
 }
 
-function Game(){
-}
+function Game(hero){
 
-Game.prototype.play = function(chrono) {
+  this.hero = hero
 
-  requestAnimationFrame(function(){
-      Game.prototype.play(chrono);
+  this.play = function() {
+
+    var self = this
+    var hero = this.hero
+
+    requestAnimationFrame(function(){
+        self.play(hero);
+      }
+    );
+
+    if(frame_n % 10 == 0){
+      hero.pick_animation(frame_n / 10);
+      if(frame_n == 40){
+      hero.pick_animation(0);
+        frame_n = 0;
+      }
     }
-  );
-
-  if(frame_n % 10 == 0){
-    chrono.pick_animation(frame_n / 10);
-    if(frame_n == 40){
-     chrono.pick_animation(0);
-      frame_n = 0;
-    }
-  }
   
 
-  if ((chrono.x > 0 || chrono.v['x']!= -1) && (chrono.x < 760 || chrono.v['x']!=1))
-    chrono.x += chrono.v['x'] * 2;
-  if ((chrono.y > 0 || chrono.v['y']!= -1) && (chrono.y < 530 || chrono.v['y']!=1))
-    chrono.y += chrono.v['y'] * 2;
+    if ((hero.x > 0 || hero.v['x']!= -1) && (hero.x < 760 || hero.v['x']!=1))
+      hero.x += hero.v['x'] * 2;
+    if ((hero.y > 0 || hero.v['y']!= -1) && (hero.y < 530 || hero.v['y']!=1))
+      hero.y += hero.v['y'] * 2;
 
-  if(blob.y > 575){
-    blob.v = -1
+    if(blob.y > 575){
+      blob.v = -1
+    }
+    if(blob.y < 0){
+      blob.v = 1
+    }
+    blob.y += blob.v
+
+    frame_n += 1;
+    renderer.render(stage);
   }
-  if(blob.y < 0){
-    blob.v = 1
-  }
-  blob.y += blob.v
-
-  frame_n += 1;
-
-  //Render the stage
-  renderer.render(stage);
 }
