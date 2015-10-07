@@ -16,7 +16,7 @@ describe("Character", function() {
     
     keys = ['up', 'left', 'down', 'right']
     for (var i = 0; i < keys.length; i++){
-      character.controls[keys[i]]['key'].press()
+      Mousetrap.trigger(keys[i])
       expect(character.state).toEqual([keys[i], 'moving'])
     }
 
@@ -25,9 +25,9 @@ describe("Character", function() {
   it("should correctly update state for press + release of a single button" , function (){
     keys = ['up', 'left', 'down', 'right']
     for (var i = 0; i < keys.length; i++){
-      character.controls[keys[i]]['key'].press()
+      Mousetrap.trigger(keys[i])
       expect(character.state).toEqual([keys[i], 'moving'])
-      character.controls[keys[i]]['key'].release()
+      Mousetrap.trigger(keys[i], 'keyup')
       expect(character.state).toEqual([keys[i], 'still'])
     }
   })
