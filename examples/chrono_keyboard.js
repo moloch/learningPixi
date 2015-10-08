@@ -7,6 +7,8 @@ var Container = PIXI.Container,
 
 var stage = new Container(),
     renderer = autoDetectRenderer(800, 600);
+
+renderer.backgroundColor = 0x000000
 document.body.appendChild(renderer.view);
 
 loader
@@ -28,6 +30,18 @@ function loadTextures(){
 }
 
 function setup() {
+
+  Mousetrap.bind('r', function(){
+    renderer._backgroundColorRgb[0] += (1/255) 
+  })
+
+  Mousetrap.bind('g', function(){
+    renderer._backgroundColorRgb[1] += (1/255)
+  })
+
+  Mousetrap.bind('b', function(){
+    renderer._backgroundColorRgb[2] += (1/255) 
+  })
 
   loadTextures();
   var chrono = new Character(textures['down'][0], 32, 32, 0, 0, ['down', 'still'])
